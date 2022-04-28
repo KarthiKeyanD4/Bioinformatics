@@ -1,0 +1,257 @@
+---
+title: "Bioinformatics Lab 3"
+author: |
+  | Biswas Kumar - Bisku859
+  | Karthikeyan Devarajan  - karde799
+date: "01/25/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ade4)
+library(tidyverse)
+library(phyloch)
+library(dplyr)
+library(stringr)
+library(data.table)
+library(factoextra)
+library(tibble)
+library(cluster)
+library(mvMORPH)
+library(ouch)
+library(abind)
+library(mvSLOUCH)
+library(ape)
+```
+
+# Question 1    
+## Question 1.1   
+*Explain all the steps in the script required to obtain the phylogeny and trait data.*  
+In step 1, A vector is created with accession numbers with z73494 and AJ53426 to AJ534549.   
+
+```{r} 
+x <- paste("AJ5345", 26:49, sep = "")
+x <- c("Z73494", x)
+```
+  
+Sequence are obtained using the accession number in GenBank database.  
+
+```{r}
+sylvia.seq <- read.GenBank(x)
+```
+  
+The list contains 25 sequences according to the accession number. "AJ534549" and "AJ534548" has 1041 nucleotides and remaining sequences has 1143 nucleotides.  
+
+The alignments are done using cluster.  
+
+```{r}
+sylvia.clus <- clustal(sylvia.seq)
+```
+
+The alignments can be done by mafft.  
+```{r}
+#sylvia.maff <- mafft(sylvia.seq)
+```
+  
+Code to save taxa.sylvia
+```{r}
+taxa.sylvia <- attr(sylvia.seq, "species")
+names(taxa.sylvia) <- names(sylvia.seq)
+taxa.sylvia[1] <- "Sylvia_atricapilla"
+taxa.sylvia[24] <- "Sylvia_abyssinica"
+```
+
+create a nj distance matrix  
+```{r}
+f <- function(xx) root(nj(dist.dna(xx, p=TRUE)), "AJ534526")
+```
+
+Create a tree based on the distance matrix  
+
+```{r}
+tr <- f(sylvia.clus)
+nj.est <- tr
+```
+
+plot the tree  
+
+```{r}
+nj.est$tip.label <- taxa.sylvia[tr$tip.label]
+write.tree(nj.est, "sylvia_nj_k80.tre")
+plot(nj.est)
+```
+  
+
+```{r}
+sylvia.eco <- read.table("sylvia_data.txt")
+```
+
+Remove the out group species  
+
+```{r}
+nj.est <- drop.tip(nj.est, "Chamaea_fasciata")
+```
+ 
+## Question 1.2  
+*Analyze the discrete (type=discrete) geographical range variable (DF$geo.range) using ape::ace. Consider different models (parameter model). Report on the results and interpret the estimated rates and their standard errors.*  
+```{r}
+sylvia.eco <- read.table("sylvia_data.txt")
+DF <- sylvia.eco[nj.est$tip.label, ]
+```
+Model - SYM   
+```{r,warning=FALSE}
+# SYM
+model_1 <- ace(DF$geo.range,phy=nj.est,type = "discrete",model = "SYM")
+cat("The log likelihood for model is",model_1$loglik,"\n")
+cat("The AIC value is ",AIC(model_1))
+```
+  
+Model - ER  
+```{r,warning=FALSE}
+# ER
+model_2 <- ace(DF$geo.range,phy=nj.est,type = "discrete",model = "ER")
+cat("The log likelihood for model is",model_2$loglik,"\n")
+cat("The AIC value is ",AIC(model_2))
+```
+  
+The Symmetrical model could be good model since it has highest log likelihood.  
+
+# Question 2  
+Install the ade4 R package. Included with it you will ﬁnd the carnivores dataset, data(carni70).  
+
+## Question 2.1  
+Explore the data set and report what can be found in it. Provide some plots.  
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+
+carni<-data(carni70)
+
+#exploring dataset (list of 2 sets)
+#head(carni70)
+
+carni_tre<-carni70[1]
+
+carni_tab<-as.data.frame(carni70[2])
+
+# Exploring the dataframe/tab through plots 
+
+# scatterplot 
+plot(carni_tab$tab.range,carni_tab$tab.size,main = "Scatterplot:Size Vs Range",xlab = "Range",ylab="Size",col="red")
+
+#Density curve
+plot(density(carni_tab$tab.size),main="Density plot of Size")
+plot(density(carni_tab$tab.range),main="Density plot of Range")
+
+
+scaled_tab<-scale(carni_tab)
+print("The Heat map")
+heatmap(scaled_tab)
+
+
+dist_object<-get_dist(scaled_tab)
+
+# Visualizing distance matrix
+viz_dist<-fviz_dist(dist_object, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+
+viz_dist
+
+# Determining optimum number of cluster (elbow method), method = "wss" (for total within sum of square)
+
+optimal_cluster_wss<-fviz_nbclust(scaled_tab, kmeans, method = "wss")
+optimal_cluster_wss
+cat("The Optimal number of cluser  with wss method : 3 \n")
+
+# K means for 3 clusters 
+set.seed(123)
+k_3 <- kmeans(scaled_tab, 3, nstart = 25)
+
+cluster_grp_no<-table(k_3$cluster)
+
+# visualizing kmeans clusters 
+carni_grp<-fviz_cluster(k_3, data = scaled_tab,
+             ggtheme = theme_minimal(),
+             main = "Kmeans Clustering"
+             )
+
+
+#building dataframe with centers and clusters
+k_3_centers<-k_3$centers
+
+cluster_no <- c(1: 3)
+
+k_3_center_df <- data.frame(cluster_no, k_3_centers)
+
+library(comprehenr)
+No_carnivores<- to_vec(for(i in 1:3) table(k_3$cluster)[[i]])
+K_3_cluster_df <- data.frame(cluster_no, No_carnivores)
+
+#frequency of carnivores in each K-3 cluster 
+K_3_cluster_df
+
+```
+Carni70 which is a data set of carnivores has a list of 2 sets (tre and tab). tre is a character sets while tab is a data frame of 70 observations and 2 variables.On further inspection, it could be noticed that tre is basically a phylogenetic tree whereas the tab data set are quantitative traits.
+
+The scatter and density plot was implemented to further understand the distribution of data.
+Most of the carnivores on scatter plot  have lower size with two exceptions. These two exceptions could be the outliers.Also,it could be easily seen that the density chart is heavily skewed/ o weighted towards the left which means that most carnivores have low size and only few are on the extreme. 
+
+The unsupervised k means clustering was implemented to check on the the number of clusters using famous elbow method. We got three clusters, out of which maximum data was distributed among first two cluster. It is therefore cluster number 3 with 2 observations can be considered as out liars as most of the data is concentrated between first two clusters
+
+The heat map and distance matrix was also plotted above which depicts two distinct group based on color patterns, that could  be easily visualized as two prominent clusters.
+
+Moreover, the hierarchy (dendogram)in the chart could be cut in a way that it gives two prominent cluster and a small cluster which could be termed as outliers.
+
+In short, we found two distinguish clusters in the given data-set with few outliers.
+
+
+## Question 2.2∗
+
+*Analyze the two traits (size and range) with a number of diﬀerent phylogenetic comparative models. Look at the R packages ape, mvMORPH, mvSLOUCH, ouch and slouch (the last one is NOT on CRAN and can be downloaded from https://github.com/kopperud/slouch). Analyze the data under the following models*  
+*1. Both traits evolve as independent Brownian motions.*  
+```{r}
+#1. Both traits evolve as independent Brownian motions, # BM1 - No covariations
+Carni_tree <-read.tree(text = carni70$tre)
+Brownian_independent <-mvBM(Carni_tree, carni70$tab,error = NULL, model="BM1",param=list(constraint="diagonal"))
+summary(Brownian_independent)
+```
+
+*2. The traits evolve as a correlated Brownian motion.*  
+```{r}
+#2. Both traits evolve as  correlated Brownian motions
+Brownian_correlated <-mvBM(Carni_tree, carni70$tab, model="BM1",param=list(constraint="correlation"))
+summary(Brownian_correlated)
+```
+
+*3. Both traits evolve as independent Ornstein–Uhlenbeck processes.*    
+```{r}
+#3. Both traits evolve as independent Ornstein–Uhlenbeck processes
+Carni_tree_a2o <-ape2ouch(tree = Carni_tree)
+summary(Carni_tree_a2o)
+```
+
+*4. The traits evolve as a bivariate Ornstein–Uhlenbeck process (use mvMORPH or mvSLOUCH but be careful and check under what assumptions the estimation is done).*  
+```{r}
+#4. The traits evolve as a bivariate Ornstein–Uhlenbeck process 
+bivariate_Ornstein <-mvOU(tree=Carni_tree, data=carni70$tab, model="OU1",diagnostic=FALSE, echo=FALSE)
+summary(bivariate_Ornstein)
+
+```
+
+*5. size evolves as a Brownian motion and range as an Ornstein–Uhlenbeck process adapting to it (use slouch or mvSLOUCH and be careful about column order).*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+rownames(carni70$tab) <- Carni_tree$tip.label
+#5. size evolves as a Brownian motion and range as an Ornstein–Uhlenbeck process adapting to it 
+Brownian_motion <- mvslouchModel(Carni_tree,mData=as.matrix(carni70$tab[,c(2,1)]),kY=1)
+```
+
+*Compare the ﬁve models and say which one seems to ﬁt better to the data. Summarize (in your own words, NOT just provide the printout, as it can be very long) the output under each model. If for some reason the running time will be prohibitive (more than 12 hours) report how long you ran the code and skip the model. Report on any problems you experienced in your study.*  
+
+The five models under evaluation gives three metrics (AIC, AIC and log-Likelihood) along with convergence status and reliability of solution. 
+
+In order to compare, we will use the metrics to understand the performance of the models.AIC score or AIC highlights the loss of information.The minimum AIC value highlights the minimal loss of information and hence selected as the best model among combinations.AIC is used for smaller samples. On other hand, we look out for higher log-likelihood for better performance of model.In the above results of the models, we see that the AIC value is minimum for model no 4 i.e bivariate Ornstein–Uhlenbeck model. It also have the highest log-likelihood values. It is therefore, model no.4 (bivariate Ornstein–Uhlenbeck model) performs the best among the received outputs.  
+
+# Code Appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+

@@ -1,0 +1,761 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Bioinformatics Lab 3},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Bioinformatics Lab 3}
+\author{Biswas Kumar - Bisku859\\
+Karthikeyan Devarajan - karde799}
+\date{11/25/2021}
+
+\begin{document}
+\maketitle
+
+\hypertarget{question-1}{%
+\section{Question 1}\label{question-1}}
+
+\hypertarget{question-1.1}{%
+\subsection{Question 1.1}\label{question-1.1}}
+
+\emph{Explain all the steps in the script required to obtain the
+phylogeny and trait data.}\\
+In step 1, A vector is created with accession numbers with z73494 and
+AJ53426 to AJ534549.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"AJ5345"}\NormalTok{, }\DecValTok{26}\SpecialCharTok{:}\DecValTok{49}\NormalTok{, }\AttributeTok{sep =} \StringTok{""}\NormalTok{)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Z73494"}\NormalTok{, x)}
+\end{Highlighting}
+\end{Shaded}
+
+Sequence are obtained using the accession number in GenBank database.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sylvia.seq }\OtherTok{\textless{}{-}} \FunctionTok{read.GenBank}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+The list contains 25 sequences according to the accession number.
+``AJ534549'' and ``AJ534548'' has 1041 nucleotides and remaining
+sequences has 1143 nucleotides.
+
+The alignments are done using cluster.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sylvia.clus }\OtherTok{\textless{}{-}} \FunctionTok{clustal}\NormalTok{(sylvia.seq)}
+\end{Highlighting}
+\end{Shaded}
+
+The alignments can be done by mafft.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#sylvia.maff \textless{}{-} mafft(sylvia.seq)}
+\end{Highlighting}
+\end{Shaded}
+
+Code to save taxa.sylvia
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{taxa.sylvia }\OtherTok{\textless{}{-}} \FunctionTok{attr}\NormalTok{(sylvia.seq, }\StringTok{"species"}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(taxa.sylvia) }\OtherTok{\textless{}{-}} \FunctionTok{names}\NormalTok{(sylvia.seq)}
+\NormalTok{taxa.sylvia[}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Sylvia\_atricapilla"}
+\NormalTok{taxa.sylvia[}\DecValTok{24}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Sylvia\_abyssinica"}
+\end{Highlighting}
+\end{Shaded}
+
+create a nj distance matrix
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{f }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(xx) }\FunctionTok{root}\NormalTok{(}\FunctionTok{nj}\NormalTok{(}\FunctionTok{dist.dna}\NormalTok{(xx, }\AttributeTok{p=}\ConstantTok{TRUE}\NormalTok{)), }\StringTok{"AJ534526"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Create a tree based on the distance matrix
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tr }\OtherTok{\textless{}{-}} \FunctionTok{f}\NormalTok{(sylvia.clus)}
+\NormalTok{nj.est }\OtherTok{\textless{}{-}}\NormalTok{ tr}
+\end{Highlighting}
+\end{Shaded}
+
+plot the tree
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nj.est}\SpecialCharTok{$}\NormalTok{tip.label }\OtherTok{\textless{}{-}}\NormalTok{ taxa.sylvia[tr}\SpecialCharTok{$}\NormalTok{tip.label]}
+\FunctionTok{write.tree}\NormalTok{(nj.est, }\StringTok{"sylvia\_nj\_k80.tre"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(nj.est)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab-3_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sylvia.eco }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"sylvia\_data.txt"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Remove the out group species
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nj.est }\OtherTok{\textless{}{-}} \FunctionTok{drop.tip}\NormalTok{(nj.est, }\StringTok{"Chamaea\_fasciata"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{question-1.2}{%
+\subsection{Question 1.2}\label{question-1.2}}
+
+\emph{Analyze the discrete (type=discrete) geographical range variable
+(DF\$geo.range) using ape::ace. Consider different models (parameter
+model). Report on the results and interpret the estimated rates and
+their standard errors.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sylvia.eco }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"sylvia\_data.txt"}\NormalTok{)}
+\NormalTok{DF }\OtherTok{\textless{}{-}}\NormalTok{ sylvia.eco[nj.est}\SpecialCharTok{$}\NormalTok{tip.label, ]}
+\end{Highlighting}
+\end{Shaded}
+
+Model - SYM
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# SYM}
+\NormalTok{model\_1 }\OtherTok{\textless{}{-}} \FunctionTok{ace}\NormalTok{(DF}\SpecialCharTok{$}\NormalTok{geo.range,}\AttributeTok{phy=}\NormalTok{nj.est,}\AttributeTok{type =} \StringTok{"discrete"}\NormalTok{,}\AttributeTok{model =} \StringTok{"SYM"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The log likelihood for model is"}\NormalTok{,model\_1}\SpecialCharTok{$}\NormalTok{loglik,}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The log likelihood for model is -16.97534
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The AIC value is "}\NormalTok{,}\FunctionTok{AIC}\NormalTok{(model\_1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The AIC value is  39.95068
+\end{verbatim}
+
+Model - ER
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ER}
+\NormalTok{model\_2 }\OtherTok{\textless{}{-}} \FunctionTok{ace}\NormalTok{(DF}\SpecialCharTok{$}\NormalTok{geo.range,}\AttributeTok{phy=}\NormalTok{nj.est,}\AttributeTok{type =} \StringTok{"discrete"}\NormalTok{,}\AttributeTok{model =} \StringTok{"ER"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The log likelihood for model is"}\NormalTok{,model\_2}\SpecialCharTok{$}\NormalTok{loglik,}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The log likelihood for model is -18.54616
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The AIC value is "}\NormalTok{,}\FunctionTok{AIC}\NormalTok{(model\_2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The AIC value is  39.09232
+\end{verbatim}
+
+The Symmetrical model could be good model since it has highest log
+likelihood.
+
+\hypertarget{question-2}{%
+\section{Question 2}\label{question-2}}
+
+Install the ade4 R package. Included with it you will ﬁnd the carnivores
+dataset, data(carni70).
+
+\hypertarget{question-2.1}{%
+\subsection{Question 2.1}\label{question-2.1}}
+
+Explore the data set and report what can be found in it. Provide some
+plots.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{carni}\OtherTok{\textless{}{-}}\FunctionTok{data}\NormalTok{(carni70)}
+
+\CommentTok{\#exploring dataset (list of 2 sets)}
+\CommentTok{\#head(carni70)}
+
+\NormalTok{carni\_tre}\OtherTok{\textless{}{-}}\NormalTok{carni70[}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{carni\_tab}\OtherTok{\textless{}{-}}\FunctionTok{as.data.frame}\NormalTok{(carni70[}\DecValTok{2}\NormalTok{])}
+
+\CommentTok{\# Exploring the dataframe/tab through plots }
+
+\CommentTok{\# scatterplot }
+\FunctionTok{plot}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.range,carni\_tab}\SpecialCharTok{$}\NormalTok{tab.size,}\AttributeTok{main =} \StringTok{"Scatterplot:Size Vs Range"}\NormalTok{,}\AttributeTok{xlab =} \StringTok{"Range"}\NormalTok{,}\AttributeTok{ylab=}\StringTok{"Size"}\NormalTok{,}\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-1} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Density curve}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.size),}\AttributeTok{main=}\StringTok{"Density plot of Size"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-2} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.range),}\AttributeTok{main=}\StringTok{"Density plot of Range"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-3} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{scaled\_tab}\OtherTok{\textless{}{-}}\FunctionTok{scale}\NormalTok{(carni\_tab)}
+\FunctionTok{print}\NormalTok{(}\StringTok{"The Heat map"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "The Heat map"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{heatmap}\NormalTok{(scaled\_tab)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-4} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dist\_object}\OtherTok{\textless{}{-}}\FunctionTok{get\_dist}\NormalTok{(scaled\_tab)}
+
+\CommentTok{\# Visualizing distance matrix}
+\NormalTok{viz\_dist}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_dist}\NormalTok{(dist\_object, }\AttributeTok{gradient =} \FunctionTok{list}\NormalTok{(}\AttributeTok{low =} \StringTok{"\#00AFBB"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"white"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#FC4E07"}\NormalTok{))}
+
+\NormalTok{viz\_dist}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-5} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Determining optimum number of cluster (elbow method), method = "wss" (for total within sum of square)}
+
+\NormalTok{optimal\_cluster\_wss}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_nbclust}\NormalTok{(scaled\_tab, kmeans, }\AttributeTok{method =} \StringTok{"wss"}\NormalTok{)}
+\NormalTok{optimal\_cluster\_wss}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{lab-3_files/figure-latex/unnamed-chunk-14-6} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The Optimal number of cluser  with wss method : 3 }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The Optimal number of cluser  with wss method : 3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# K means for 3 clusters }
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{k\_3 }\OtherTok{\textless{}{-}} \FunctionTok{kmeans}\NormalTok{(scaled\_tab, }\DecValTok{3}\NormalTok{, }\AttributeTok{nstart =} \DecValTok{25}\NormalTok{)}
+
+\NormalTok{cluster\_grp\_no}\OtherTok{\textless{}{-}}\FunctionTok{table}\NormalTok{(k\_3}\SpecialCharTok{$}\NormalTok{cluster)}
+
+\CommentTok{\# visualizing kmeans clusters }
+\NormalTok{carni\_grp}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_cluster}\NormalTok{(k\_3, }\AttributeTok{data =}\NormalTok{ scaled\_tab,}
+             \AttributeTok{ggtheme =} \FunctionTok{theme\_minimal}\NormalTok{(),}
+             \AttributeTok{main =} \StringTok{"Kmeans Clustering"}
+\NormalTok{             )}
+
+
+\CommentTok{\#building dataframe with centers and clusters}
+\NormalTok{k\_3\_centers}\OtherTok{\textless{}{-}}\NormalTok{k\_3}\SpecialCharTok{$}\NormalTok{centers}
+
+\NormalTok{cluster\_no }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:} \DecValTok{3}\NormalTok{)}
+
+\NormalTok{k\_3\_center\_df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(cluster\_no, k\_3\_centers)}
+
+\FunctionTok{library}\NormalTok{(comprehenr)}
+\NormalTok{No\_carnivores}\OtherTok{\textless{}{-}} \FunctionTok{to\_vec}\NormalTok{(}\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\FunctionTok{table}\NormalTok{(k\_3}\SpecialCharTok{$}\NormalTok{cluster)[[i]])}
+\NormalTok{K\_3\_cluster\_df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(cluster\_no, No\_carnivores)}
+
+\CommentTok{\#frequency of carnivores in each K{-}3 cluster }
+\NormalTok{K\_3\_cluster\_df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   cluster_no No_carnivores
+## 1          1            36
+## 2          2            32
+## 3          3             2
+\end{verbatim}
+
+Carni70 which is a data set of carnivores has a list of 2 sets (tre and
+tab). tre is a character sets while tab is a data frame of 70
+observations and 2 variables.On further inspection, it could be noticed
+that tre is basically a phylogenetic tree whereas the tab data set are
+quantitative traits.
+
+The scatter and density plot was implemented to further understand the
+distribution of data. Most of the carnivores on scatter plot have lower
+size with two exceptions. These two exceptions could be the
+outliers.Also,it could be easily seen that the density chart is heavily
+skewed/ o weighted towards the left which means that most carnivores
+have low size and only few are on the extreme.
+
+The unsupervised k means clustering was implemented to check on the the
+number of clusters using famous elbow method. We got three clusters, out
+of which maximum data was distributed among first two cluster. It is
+therefore cluster number 3 with 2 observations can be considered as out
+liars as most of the data is concentrated between first two clusters
+
+The heat map and distance matrix was also plotted above which depicts
+two distinct group based on color patterns, that could be easily
+visualized as two prominent clusters.
+
+Moreover, the hierarchy (dendogram)in the chart could be cut in a way
+that it gives two prominent cluster and a small cluster which could be
+termed as outliers.
+
+In short, we found two distinguish clusters in the given data-set with
+few outliers.
+
+\hypertarget{question-2.2}{%
+\subsection{Question 2.2∗}\label{question-2.2}}
+
+\emph{Analyze the two traits (size and range) with a number of diﬀerent
+phylogenetic comparative models. Look at the R packages ape, mvMORPH,
+mvSLOUCH, ouch and slouch (the last one is NOT on CRAN and can be
+downloaded from \url{https://github.com/kopperud/slouch}). Analyze the
+data under the following models}\\
+\emph{1. Both traits evolve as independent Brownian motions.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#1. Both traits evolve as independent Brownian motions, \# BM1 {-} No covariations}
+\NormalTok{Carni\_tree }\OtherTok{\textless{}{-}}\FunctionTok{read.tree}\NormalTok{(}\AttributeTok{text =}\NormalTok{ carni70}\SpecialCharTok{$}\NormalTok{tre)}
+\NormalTok{Brownian\_independent }\OtherTok{\textless{}{-}}\FunctionTok{mvBM}\NormalTok{(Carni\_tree, carni70}\SpecialCharTok{$}\NormalTok{tab,}\AttributeTok{error =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{model=}\StringTok{"BM1"}\NormalTok{,}\AttributeTok{param=}\FunctionTok{list}\NormalTok{(}\AttributeTok{constraint=}\StringTok{"diagonal"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## row names of the data matrix must match tip names of your phylogeny! 
+## successful convergence of the optimizer 
+## a reliable solution has been reached 
+## 
+## -- Summary results for constrained rate  BM1 model -- 
+## LogLikelihood:    -589.2373 
+## AIC:      1186.475 
+## AICc:     1186.771 
+## 4 parameters 
+## 
+## Estimated rate matrix 
+## ______________________ 
+##           size    range
+## size  73.70338  0.00000
+## range  0.00000 13.54519
+## 
+## Estimated root state 
+## ______________________ 
+##            size    range
+## theta: 38.43947 13.78439
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(Brownian\_independent)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## mvMORPH model : BM1  summary 
+## AIC : 1186.475 
+## AICc: 1186.771 
+## Log-Likelihood: -589.2373 
+## Succesful convergence 
+## Reliable solution
+\end{verbatim}
+
+\emph{2. The traits evolve as a correlated Brownian motion.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#2. Both traits evolve as  correlated Brownian motions}
+\NormalTok{Brownian\_correlated }\OtherTok{\textless{}{-}}\FunctionTok{mvBM}\NormalTok{(Carni\_tree, carni70}\SpecialCharTok{$}\NormalTok{tab, }\AttributeTok{model=}\StringTok{"BM1"}\NormalTok{,}\AttributeTok{param=}\FunctionTok{list}\NormalTok{(}\AttributeTok{constraint=}\StringTok{"correlation"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  "shared","variance","correlation" and "proportional" can be used only with BMM model 
+## row names of the data matrix must match tip names of your phylogeny! 
+## successful convergence of the optimizer 
+## a reliable solution has been reached 
+## 
+## -- Summary results for multiple rate BM1 model -- 
+## LogLikelihood:    -588.7853 
+## AIC:      1187.571 
+## AICc:     1188.018 
+## 5 parameters 
+## 
+## Estimated rate matrix 
+## ______________________ 
+##            size     range
+## size  73.692486  3.578825
+## range  3.578825 13.545170
+## 
+## Estimated root state 
+## ______________________ 
+##            size    range
+## theta: 38.43947 13.78439
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(Brownian\_correlated)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## mvMORPH model : BM1  summary 
+## AIC : 1187.571 
+## AICc: 1188.018 
+## Log-Likelihood: -588.7853 
+## Succesful convergence 
+## Reliable solution
+\end{verbatim}
+
+\emph{3. Both traits evolve as independent Ornstein--Uhlenbeck
+processes.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#3. Both traits evolve as independent Ornstein–Uhlenbeck processes}
+\NormalTok{Carni\_tree\_a2o }\OtherTok{\textless{}{-}}\FunctionTok{ape2ouch}\NormalTok{(}\AttributeTok{tree =}\NormalTok{ Carni\_tree)}
+\FunctionTok{summary}\NormalTok{(Carni\_tree\_a2o)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Length    Class     Mode 
+##        1 ouchtree       S4
+\end{verbatim}
+
+\emph{4. The traits evolve as a bivariate Ornstein--Uhlenbeck process
+(use mvMORPH or mvSLOUCH but be careful and check under what assumptions
+the estimation is done).}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#4. The traits evolve as a bivariate Ornstein–Uhlenbeck process }
+\NormalTok{bivariate\_Ornstein }\OtherTok{\textless{}{-}}\FunctionTok{mvOU}\NormalTok{(}\AttributeTok{tree=}\NormalTok{Carni\_tree, }\AttributeTok{data=}\NormalTok{carni70}\SpecialCharTok{$}\NormalTok{tab, }\AttributeTok{model=}\StringTok{"OU1"}\NormalTok{,}\AttributeTok{diagnostic=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{echo=}\ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{summary}\NormalTok{(bivariate\_Ornstein)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## mvMORPH model : OU1  summary 
+## AIC : 1161.213 
+## AICc: 1162.312 
+## Log-Likelihood: -572.6063 
+## Succesful convergence 
+## Reliable solution
+\end{verbatim}
+
+\emph{5. size evolves as a Brownian motion and range as an
+Ornstein--Uhlenbeck process adapting to it (use slouch or mvSLOUCH and
+be careful about column order).}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rownames}\NormalTok{(carni70}\SpecialCharTok{$}\NormalTok{tab) }\OtherTok{\textless{}{-}}\NormalTok{ Carni\_tree}\SpecialCharTok{$}\NormalTok{tip.label}
+\CommentTok{\#5. size evolves as a Brownian motion and range as an Ornstein–Uhlenbeck process adapting to it }
+\NormalTok{Brownian\_motion }\OtherTok{\textless{}{-}} \FunctionTok{mvslouchModel}\NormalTok{(Carni\_tree,}\AttributeTok{mData=}\FunctionTok{as.matrix}\NormalTok{(carni70}\SpecialCharTok{$}\NormalTok{tab[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{)]),}\AttributeTok{kY=}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Atype is at the default "Invertible" setting. This is a highly inefficient and unrecommended setting. Please look into the possible constraints on A and choose the one best corresponding to the hypothesis on the relationship between the traits.
+\end{verbatim}
+
+\emph{Compare the ﬁve models and say which one seems to ﬁt better to the
+data. Summarize (in your own words, NOT just provide the printout, as it
+can be very long) the output under each model. If for some reason the
+running time will be prohibitive (more than 12 hours) report how long
+you ran the code and skip the model. Report on any problems you
+experienced in your study.}
+
+The five models under evaluation gives three metrics (AIC, AIC and
+log-Likelihood) along with convergence status and reliability of
+solution.
+
+In order to compare, we will use the metrics to understand the
+performance of the models.AIC score or AIC highlights the loss of
+information.The minimum AIC value highlights the minimal loss of
+information and hence selected as the best model among combinations.AIC
+is used for smaller samples. On other hand, we look out for higher
+log-likelihood for better performance of model.In the above results of
+the models, we see that the AIC value is minimum for model no 4 i.e
+bivariate Ornstein--Uhlenbeck model. It also have the highest
+log-likelihood values. It is therefore, model no.4 (bivariate
+Ornstein--Uhlenbeck model) performs the best among the received outputs.
+
+\hypertarget{code-appendix}{%
+\section{Code Appendix}\label{code-appendix}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\SpecialCharTok{::}\NormalTok{opts\_chunk}\SpecialCharTok{$}\FunctionTok{set}\NormalTok{(}\AttributeTok{echo =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(ade4)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(phyloch)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(stringr)}
+\FunctionTok{library}\NormalTok{(data.table)}
+\FunctionTok{library}\NormalTok{(factoextra)}
+\FunctionTok{library}\NormalTok{(tibble)}
+\FunctionTok{library}\NormalTok{(cluster)}
+\FunctionTok{library}\NormalTok{(mvMORPH)}
+\FunctionTok{library}\NormalTok{(ouch)}
+\FunctionTok{library}\NormalTok{(abind)}
+\FunctionTok{library}\NormalTok{(mvSLOUCH)}
+\FunctionTok{library}\NormalTok{(ape)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"AJ5345"}\NormalTok{, }\DecValTok{26}\SpecialCharTok{:}\DecValTok{49}\NormalTok{, }\AttributeTok{sep =} \StringTok{""}\NormalTok{)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Z73494"}\NormalTok{, x)}
+\NormalTok{sylvia.seq }\OtherTok{\textless{}{-}} \FunctionTok{read.GenBank}\NormalTok{(x)}
+\NormalTok{sylvia.clus }\OtherTok{\textless{}{-}} \FunctionTok{clustal}\NormalTok{(sylvia.seq)}
+\CommentTok{\#sylvia.maff \textless{}{-} mafft(sylvia.seq)}
+\NormalTok{taxa.sylvia }\OtherTok{\textless{}{-}} \FunctionTok{attr}\NormalTok{(sylvia.seq, }\StringTok{"species"}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(taxa.sylvia) }\OtherTok{\textless{}{-}} \FunctionTok{names}\NormalTok{(sylvia.seq)}
+\NormalTok{taxa.sylvia[}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Sylvia\_atricapilla"}
+\NormalTok{taxa.sylvia[}\DecValTok{24}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Sylvia\_abyssinica"}
+\NormalTok{f }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(xx) }\FunctionTok{root}\NormalTok{(}\FunctionTok{nj}\NormalTok{(}\FunctionTok{dist.dna}\NormalTok{(xx, }\AttributeTok{p=}\ConstantTok{TRUE}\NormalTok{)), }\StringTok{"AJ534526"}\NormalTok{)}
+\NormalTok{tr }\OtherTok{\textless{}{-}} \FunctionTok{f}\NormalTok{(sylvia.clus)}
+\NormalTok{nj.est }\OtherTok{\textless{}{-}}\NormalTok{ tr}
+\NormalTok{nj.est}\SpecialCharTok{$}\NormalTok{tip.label }\OtherTok{\textless{}{-}}\NormalTok{ taxa.sylvia[tr}\SpecialCharTok{$}\NormalTok{tip.label]}
+\FunctionTok{write.tree}\NormalTok{(nj.est, }\StringTok{"sylvia\_nj\_k80.tre"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(nj.est)}
+\NormalTok{sylvia.eco }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"sylvia\_data.txt"}\NormalTok{)}
+\NormalTok{nj.est }\OtherTok{\textless{}{-}} \FunctionTok{drop.tip}\NormalTok{(nj.est, }\StringTok{"Chamaea\_fasciata"}\NormalTok{)}
+\NormalTok{sylvia.eco }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"sylvia\_data.txt"}\NormalTok{)}
+\NormalTok{DF }\OtherTok{\textless{}{-}}\NormalTok{ sylvia.eco[nj.est}\SpecialCharTok{$}\NormalTok{tip.label, ]}
+\CommentTok{\# SYM}
+\NormalTok{model\_1 }\OtherTok{\textless{}{-}} \FunctionTok{ace}\NormalTok{(DF}\SpecialCharTok{$}\NormalTok{geo.range,}\AttributeTok{phy=}\NormalTok{nj.est,}\AttributeTok{type =} \StringTok{"discrete"}\NormalTok{,}\AttributeTok{model =} \StringTok{"SYM"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The log likelihood for model is"}\NormalTok{,model\_1}\SpecialCharTok{$}\NormalTok{loglik,}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The AIC value is "}\NormalTok{,}\FunctionTok{AIC}\NormalTok{(model\_1))}
+\CommentTok{\# ER}
+\NormalTok{model\_2 }\OtherTok{\textless{}{-}} \FunctionTok{ace}\NormalTok{(DF}\SpecialCharTok{$}\NormalTok{geo.range,}\AttributeTok{phy=}\NormalTok{nj.est,}\AttributeTok{type =} \StringTok{"discrete"}\NormalTok{,}\AttributeTok{model =} \StringTok{"ER"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The log likelihood for model is"}\NormalTok{,model\_2}\SpecialCharTok{$}\NormalTok{loglik,}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The AIC value is "}\NormalTok{,}\FunctionTok{AIC}\NormalTok{(model\_2))}
+
+\NormalTok{carni}\OtherTok{\textless{}{-}}\FunctionTok{data}\NormalTok{(carni70)}
+
+\CommentTok{\#exploring dataset (list of 2 sets)}
+\CommentTok{\#head(carni70)}
+
+\NormalTok{carni\_tre}\OtherTok{\textless{}{-}}\NormalTok{carni70[}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{carni\_tab}\OtherTok{\textless{}{-}}\FunctionTok{as.data.frame}\NormalTok{(carni70[}\DecValTok{2}\NormalTok{])}
+
+\CommentTok{\# Exploring the dataframe/tab through plots }
+
+\CommentTok{\# scatterplot }
+\FunctionTok{plot}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.range,carni\_tab}\SpecialCharTok{$}\NormalTok{tab.size,}\AttributeTok{main =} \StringTok{"Scatterplot:Size Vs Range"}\NormalTok{,}\AttributeTok{xlab =} \StringTok{"Range"}\NormalTok{,}\AttributeTok{ylab=}\StringTok{"Size"}\NormalTok{,}\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+
+\CommentTok{\#Density curve}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.size),}\AttributeTok{main=}\StringTok{"Density plot of Size"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{density}\NormalTok{(carni\_tab}\SpecialCharTok{$}\NormalTok{tab.range),}\AttributeTok{main=}\StringTok{"Density plot of Range"}\NormalTok{)}
+
+
+\NormalTok{scaled\_tab}\OtherTok{\textless{}{-}}\FunctionTok{scale}\NormalTok{(carni\_tab)}
+\FunctionTok{print}\NormalTok{(}\StringTok{"The Heat map"}\NormalTok{)}
+\FunctionTok{heatmap}\NormalTok{(scaled\_tab)}
+
+
+\NormalTok{dist\_object}\OtherTok{\textless{}{-}}\FunctionTok{get\_dist}\NormalTok{(scaled\_tab)}
+
+\CommentTok{\# Visualizing distance matrix}
+\NormalTok{viz\_dist}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_dist}\NormalTok{(dist\_object, }\AttributeTok{gradient =} \FunctionTok{list}\NormalTok{(}\AttributeTok{low =} \StringTok{"\#00AFBB"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"white"}\NormalTok{, }\AttributeTok{high =} \StringTok{"\#FC4E07"}\NormalTok{))}
+
+\NormalTok{viz\_dist}
+
+\CommentTok{\# Determining optimum number of cluster (elbow method), method = "wss" (for total within sum of square)}
+
+\NormalTok{optimal\_cluster\_wss}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_nbclust}\NormalTok{(scaled\_tab, kmeans, }\AttributeTok{method =} \StringTok{"wss"}\NormalTok{)}
+\NormalTok{optimal\_cluster\_wss}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The Optimal number of cluser  with wss method : 3 }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+\CommentTok{\# K means for 3 clusters }
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{k\_3 }\OtherTok{\textless{}{-}} \FunctionTok{kmeans}\NormalTok{(scaled\_tab, }\DecValTok{3}\NormalTok{, }\AttributeTok{nstart =} \DecValTok{25}\NormalTok{)}
+
+\NormalTok{cluster\_grp\_no}\OtherTok{\textless{}{-}}\FunctionTok{table}\NormalTok{(k\_3}\SpecialCharTok{$}\NormalTok{cluster)}
+
+\CommentTok{\# visualizing kmeans clusters }
+\NormalTok{carni\_grp}\OtherTok{\textless{}{-}}\FunctionTok{fviz\_cluster}\NormalTok{(k\_3, }\AttributeTok{data =}\NormalTok{ scaled\_tab,}
+             \AttributeTok{ggtheme =} \FunctionTok{theme\_minimal}\NormalTok{(),}
+             \AttributeTok{main =} \StringTok{"Kmeans Clustering"}
+\NormalTok{             )}
+
+
+\CommentTok{\#building dataframe with centers and clusters}
+\NormalTok{k\_3\_centers}\OtherTok{\textless{}{-}}\NormalTok{k\_3}\SpecialCharTok{$}\NormalTok{centers}
+
+\NormalTok{cluster\_no }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:} \DecValTok{3}\NormalTok{)}
+
+\NormalTok{k\_3\_center\_df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(cluster\_no, k\_3\_centers)}
+
+\FunctionTok{library}\NormalTok{(comprehenr)}
+\NormalTok{No\_carnivores}\OtherTok{\textless{}{-}} \FunctionTok{to\_vec}\NormalTok{(}\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\FunctionTok{table}\NormalTok{(k\_3}\SpecialCharTok{$}\NormalTok{cluster)[[i]])}
+\NormalTok{K\_3\_cluster\_df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(cluster\_no, No\_carnivores)}
+
+\CommentTok{\#frequency of carnivores in each K{-}3 cluster }
+\NormalTok{K\_3\_cluster\_df}
+
+\CommentTok{\#1. Both traits evolve as independent Brownian motions, \# BM1 {-} No covariations}
+\NormalTok{Carni\_tree }\OtherTok{\textless{}{-}}\FunctionTok{read.tree}\NormalTok{(}\AttributeTok{text =}\NormalTok{ carni70}\SpecialCharTok{$}\NormalTok{tre)}
+\NormalTok{Brownian\_independent }\OtherTok{\textless{}{-}}\FunctionTok{mvBM}\NormalTok{(Carni\_tree, carni70}\SpecialCharTok{$}\NormalTok{tab,}\AttributeTok{error =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{model=}\StringTok{"BM1"}\NormalTok{,}\AttributeTok{param=}\FunctionTok{list}\NormalTok{(}\AttributeTok{constraint=}\StringTok{"diagonal"}\NormalTok{))}
+\FunctionTok{summary}\NormalTok{(Brownian\_independent)}
+\CommentTok{\#2. Both traits evolve as  correlated Brownian motions}
+\NormalTok{Brownian\_correlated }\OtherTok{\textless{}{-}}\FunctionTok{mvBM}\NormalTok{(Carni\_tree, carni70}\SpecialCharTok{$}\NormalTok{tab, }\AttributeTok{model=}\StringTok{"BM1"}\NormalTok{,}\AttributeTok{param=}\FunctionTok{list}\NormalTok{(}\AttributeTok{constraint=}\StringTok{"correlation"}\NormalTok{))}
+\FunctionTok{summary}\NormalTok{(Brownian\_correlated)}
+\CommentTok{\#3. Both traits evolve as independent Ornstein–Uhlenbeck processes}
+\NormalTok{Carni\_tree\_a2o }\OtherTok{\textless{}{-}}\FunctionTok{ape2ouch}\NormalTok{(}\AttributeTok{tree =}\NormalTok{ Carni\_tree)}
+\FunctionTok{summary}\NormalTok{(Carni\_tree\_a2o)}
+\CommentTok{\#4. The traits evolve as a bivariate Ornstein–Uhlenbeck process }
+\NormalTok{bivariate\_Ornstein }\OtherTok{\textless{}{-}}\FunctionTok{mvOU}\NormalTok{(}\AttributeTok{tree=}\NormalTok{Carni\_tree, }\AttributeTok{data=}\NormalTok{carni70}\SpecialCharTok{$}\NormalTok{tab, }\AttributeTok{model=}\StringTok{"OU1"}\NormalTok{,}\AttributeTok{diagnostic=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{echo=}\ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{summary}\NormalTok{(bivariate\_Ornstein)}
+
+\FunctionTok{rownames}\NormalTok{(carni70}\SpecialCharTok{$}\NormalTok{tab) }\OtherTok{\textless{}{-}}\NormalTok{ Carni\_tree}\SpecialCharTok{$}\NormalTok{tip.label}
+\CommentTok{\#5. size evolves as a Brownian motion and range as an Ornstein–Uhlenbeck process adapting to it }
+\NormalTok{Brownian\_motion }\OtherTok{\textless{}{-}} \FunctionTok{mvslouchModel}\NormalTok{(Carni\_tree,}\AttributeTok{mData=}\FunctionTok{as.matrix}\NormalTok{(carni70}\SpecialCharTok{$}\NormalTok{tab[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{)]),}\AttributeTok{kY=}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
