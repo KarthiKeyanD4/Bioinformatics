@@ -1,0 +1,103 @@
+---
+title: "Bioinformatics - Lab 2"
+author: |
+  | Biswas Kumar - Bisku859
+  | Karthikeyan Devarajan  - karde799
+date: "01/24/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE,dev='cairo_pdf'}
+knitr::opts_chunk$set(echo = TRUE)
+options(tinytex.verbose = TRUE)
+library(ape)
+library(seqinr)
+library(msae)
+library(Biostrings)
+library(phangorn)
+library(seriation)
+```
+
+
+
+## Question 2.3  
+
+*Align your sequences using software of your choice (a starter for R: https://stackoverflow.com/questions/4497747/how-to-perform-basic-multiple-sequence-alignments-in-r, you can also look what Biopython, BioPerl offer, use the Clustal family of programs or something else of your choice). Choose a distance measure between sequences, calculate for each alignment the distances between all pairs of sequences. Then, plot heatmaps visualizing the distances. Comment on what you can observe.*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+#reading alignment of true and simulated sequences
+original_seq<-read.alignment("lizard_seqs.fasta", format="fasta")
+sim_seq<-read.alignment("out_sim.fasta", format="fasta")
+
+#Distane matrix of true and simulated sequences
+true_seq_dist<-as.matrix(dist.alignment(original_seq, matrix = "identity"))
+sim_seq_dist<-as.matrix(dist.alignment(sim_seq, matrix = "identity"))
+
+#Heatmap of true sequence
+heatmap(true_seq_dist)
+#Heatmap of simulated sequence 
+heatmap(sim_seq_dist)
+
+```
+  
+The color codes shows the distance between sequences. Lighter (or lower intensity) the color,smaller the distance. For example, the red color highlights large distance between sequences while white reflects the lowest.
+
+In the above heat-maps, the data around diagonals are having least distance. There are small clusters formed around diagonals in true sequence. This indicate that data around diagonals are similar while when we check the heatmap for simulated sequences, there is no such cluster formed on diagonals. This indicate that the sequence maintains the maximum distance between them and and avoided to get into clusters.
+
+This could be because degree of independence of data. In true dataset, the data might have some dependence and therefore shows similarity and shows cluster while the data seems to be independent in the simulated sequences.
+
+
+# Question 3: Phylogeny reconstruction
+
+## Question 3.1
+*Construct (using algorithm and software of your choice) phylogenetic trees from the three multiple alignments (or distance matrices) done in Question 2.3. You might want to look at the functions offered by ape, phangorn (https://cran.r-project.org/web/packages/phangorn/ vignettes/Trees.pdf) or go for some completely different software. Plot the inferred trees. Are the two based on the simulated data similar to expected? Perform a phylogenetic bootstrap analysis and report the bootstrap support for the individual clades, you can look at ape::boot.phylo().*    
+
+```{r,echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+#phylogenetic bootstrap analysis
+# examples https://rdrr.io/cran/ape/man/boot.phylo.html
+# nj used as tree was estimated with neighbor-joining
+
+boot_strap<-function(seq_dist){
+
+phy_out<-nj(seq_dist) 
+boot_out<- boot.phylo(phy=phy_out,x=seq_dist,FUN=nj, trees = TRUE)
+
+clad_out = prop.clades(upgma(seq_dist,method = "average"),boot_out$tree, rooted = TRUE)
+
+boot = prop.clades(upgma(seq_dist,method = "average"),boot_out$tree)
+
+plot(upgma(seq_dist,method = "average"), type = "phylogram")
+
+drawSupportOnEdges(boot)
+nodelabels(clad_out)}
+```
+  
+The plot for true sequence is following:  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+
+#using wrapper function around hclust(upgma) to plot trees
+
+plot(upgma(true_seq_dist,method = "average"))
+
+#bootstrap analysis on true or original sequence 
+boot_strap(true_seq_dist)
+```
+  
+  
+
+The plot for simulated sequence is below: 
+```{r}
+#bootstrap analysis on simulated sequence 
+boot_strap(sim_seq_dist)
+plot(upgma(sim_seq_dist,method = "average"))
+```
+
+Looking at the plots above, we can say that the bootstrap analysis on true and the simulated sequence looks bit different.
+
+# Code Appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```
+

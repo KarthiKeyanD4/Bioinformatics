@@ -1,0 +1,222 @@
+---
+title: "Bioinformatics - Lab 2"
+author: |
+  | Biswas Kumar - Bisku859
+  | Karthikeyan Devarajan  - karde799
+date: "01/24/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE,dev='cairo_pdf'}
+knitr::opts_chunk$set(echo = TRUE)
+options(tinytex.verbose = TRUE)
+library(ape)
+library(seqinr)
+library(msae)
+library(Biostrings)
+library(phangorn)
+library(seriation)
+```
+
+# Question 1: DNA sequence acquisition and simulation
+
+## Question 1.1
+*Simulate an artificial DNA sequence dataset. It should contain 33 sequence. The lengths of the sequences should be the same as in the lizard dataset, i.e. for each real sequence simulate an artificial one. The simulation rule is as follows, each nucleotide is to be independently and randomly drawn from the distribution given by the base composition (frequencies) in the true lizard sequences. Save your dataset in a fasta format file. Remember to give unique names to your sequences. Report on the base composition in your simulated data.*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+## Gene bank accession numbers taken from http://www.jcsantosresearch.org/Class_2014_Spring_Comparative/pdf/week_2/Jan_13_15_2015_GenBank_part_2.pdf
+lizards_accession_numbers <- c("JF806202", "HM161150", "FJ356743", "JF806205", 
+                               "JQ073190", "GU457971", "FJ356741", "JF806207",
+                               "JF806210", "AY662592", "AY662591", "FJ356748",       
+                               "JN112660", "AY662594", "JN112661", "HQ876437", 
+                               "HQ876434", "AY662590", "FJ356740", "JF806214", 
+                               "JQ073188", "FJ356749", "JQ073189", "JF806216", 
+                               "AY662598", "JN112653", "JF806204", "FJ356747", 
+                               "FJ356744", "HQ876440", "JN112651", "JF806215",
+                               "JF806209") 
+lizards_sequences<-ape::read.GenBank(lizards_accession_numbers)
+print(lizards_sequences)
+ape::write.dna(lizards_sequences, file ="lizard_seqs.fasta", format = "fasta", append =FALSE, nbcol = 6, colsep = " ", colw = 10)
+
+
+
+#nucleotides
+nucleotides<- c("A", "C", "G", "T") 
+# Given sequence length, same as original i.e 33
+seqlength<-length(lizards_sequences)
+# probabilities of original lizards sequences
+probab<-base.freq(lizards_sequences)
+
+out_sim<-c()
+i=1
+while(i<=seqlength){
+  out_sim[[i]]<-sample(nucleotides,length(lizards_sequences[[i]]), rep=TRUE,prob=probab) # Generate a sequenc
+  i=i+1
+}
+
+#naming unique name to the simulated sequence 
+names(out_sim) <-paste("S_",lizards_accession_numbers,sep = "")
+#Final simulated list of sequence
+#out_sim  # not printing here 
+
+#writing file in Fasta format 
+write.dna(out_sim, file = "out_sim.fasta",format = "fasta")
+
+#base composition in our simulated data 
+cat("The base frequencies on simulated data :\n")
+sim_probab<-base.freq(as.DNAbin(out_sim))
+
+```
+
+## Ref: https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/src/chapter10.html
+
+# Question 1.2
+*Simulate a second artificial DNA sequence dataset. It should contain 33 sequence. The lengths of the sequences should be the same as in the lizard dataset, i.e. for each real sequence simulate an artificial one. First simulate a phylogenetic tree with 33 tips in phylo format (i.e. ape). Plot your resulting tree. For simulating the tree explore the functions of the ape, TreeSim or other R packages. Choose a simulation function and model yourself.*  
+
+*Now simulate sequences on this using e.g. phangorn::simSeq(). Choose the sequence length yourself, but try to make it so that it will be comparable with the original lizards dataset. You need to also specify the Q matrix—the transition rate matrix. Choose one yourself, however try to make the stationary distribution equal to the base composition (frequencies) of the lizard sequences (look at EG Ch. 14.3.3). If you cannot obtain such a transition matrix, choose some another one. Save your dataset in a fasta format file. Remember to give unique names to your sequences. Report on the base composition in your simulated data. Comment on if it is what you expect.*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+# simulate a phylogenetic tree with 33 tips in phylo format 
+tt<-rtree(n = 33)
+plot(tt)
+```  
+  
+# Question 2: Sequence analysis
+
+## Question 2.1
+*Report some basic statistics on each sequence dataset: individual base composition, GC content,CG, AT content. Also translate your sequences into protein sequences (see Lab 1) and report on the amino acid composition. In your simulated sequences, how many times did you observe a stop codon inside your sequence? Does this occur in your true sequences? Comment.*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+#individual base composition
+
+df<-data.frame(Original_dataset =probab, Sim_dataset=sim_probab)
+cat("Individual base composition")
+df
+
+# GC content
+
+df_GC<-data.frame(Original_dataset =GC.content(lizards_sequences), Sim_dataset=GC.content(as.DNAbin(out_sim)))
+cat("GC Content")
+df_GC
+
+#AT content
+# Since GC+AT = 1, therefore AT=1-GC 
+
+df_AT<-data.frame(Original_dataset =1-GC.content(lizards_sequences), Sim_dataset=1-GC.content(as.DNAbin(out_sim)))
+cat("AT Content")
+df_AT
+
+#translate your sequences into protein sequences
+
+amino_comp<-function(data_seq){
+# translating simulated sequence 
+trans_sim<-trans(data_seq)
+#vector conversion for the list
+
+trans_sim<-unlist(as.character(trans_sim))
+#summarizing using table 
+Sum_trans_sim<-table(trans_sim)
+n_trans_sim<-length(trans_sim)
+
+
+# count of amino acid
+Protein_simulated_count<-Sum_trans_sim
+
+#naming the protein counts
+names(Protein_simulated_count)<-names(Sum_trans_sim)
+
+# composition of amino acid 
+Protein_simulated<-Sum_trans_sim/n_trans_sim
+
+#naming the protein 
+names(Protein_simulated)<-names(Sum_trans_sim)
+
+df<-data.frame(Comp= Protein_simulated,Counts= Protein_simulated_count)
+df = subset(df, select = -Counts.Var1 )
+colnames(df)<-c("amino Acid","Composition","Counts")
+#return(data.frame(Comp= Protein_simulated,Counts= Protein_simulated_count))
+return(df)
+}
+
+cat("The amino acid composition and counts in translated sequences :\n")
+amino_comp(as.DNAbin(out_sim))
+
+cat("The number of stop codon inside sequence translated sequences :\n")
+temp1<-amino_comp(as.DNAbin(out_sim))
+temp1$Counts[1]
+
+cat("The amino acid composition and counts in true sequences :\n")
+temp2<-amino_comp(lizards_sequences)
+temp2$Counts[1]
+
+
+```
+
+Yes, stop codon occur in our simulated as well as in true sequences which is highlighted above.  
+
+## Question 2.3  
+
+*Align your sequences using software of your choice (a starter for R: https://stackoverflow.com/questions/4497747/how-to-perform-basic-multiple-sequence-alignments-in-r, you can also look what Biopython, BioPerl offer, use the Clustal family of programs or something else of your choice). Choose a distance measure between sequences, calculate for each alignment the distances between all pairs of sequences. Then, plot heatmaps visualizing the distances. Comment on what you can observe.*  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+#reading alignment of true and simulated sequences
+original_seq<-read.alignment("lizard_seqs.fasta", format="fasta")
+sim_seq<-read.alignment("out_sim.fasta", format="fasta")
+
+#Distane matrix of true and simulated sequences
+true_seq_dist<-as.matrix(dist.alignment(original_seq, matrix = "identity"))
+sim_seq_dist<-as.matrix(dist.alignment(sim_seq, matrix = "identity"))
+
+#Heatmap of true sequene
+heatmap(true_seq_dist)
+#Heatmap of simulated sequene 
+heatmap(sim_seq_dist)
+
+```
+  
+
+# Question 3: Phylogeny reconstruction
+
+## Question 3.1
+*Construct (using algorithm and software of your choice) phylogenetic trees from the three multiple alignments (or distance matrices) done in Question 2.3. You might want to look at the functions offered by ape, phangorn (https://cran.r-project.org/web/packages/phangorn/ vignettes/Trees.pdf) or go for some completely different software. Plot the inferred trees. Are the two based on the simulated data similar to expected? Perform a phylogenetic bootstrap analysis and report the bootstrap support for the individual clades, you can look at ape::boot.phylo().*    
+
+```{r,echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+#phylogenetic bootstrap analysis
+# examples https://rdrr.io/cran/ape/man/boot.phylo.html
+# nj used as tree was estimated with neighbor-joining
+
+boot_strap<-function(seq_dist){
+  phy_out<-nj(seq_dist) 
+  boot_out<- boot.phylo(phy=phy_out,x=seq_dist,FUN=nj, trees = TRUE)
+  clad_out = prop.clades(upgma(seq_dist,method = "average"),boot_out$tree, rooted = TRUE)
+  boot = prop.clades(upgma(seq_dist,method = "average"),boot_out$tree)
+  plot(upgma(seq_dist,method = "average"), type = "phylogram")
+  drawSupportOnEdges(boot)
+  nodelabels(clad_out)
+}
+```
+  
+The plot for true sequence is following:  
+
+```{r, echo=TRUE, eval=TRUE,warning=FALSE,fig.align="center"}
+
+#using wrapper function around hclust(upgma) to plot trees
+
+plot(upgma(true_seq_dist,method = "average"))
+
+#bootstrap analysis on true or original sequence 
+boot_strap(true_seq_dist)
+```
+  
+The plot for simulated sequence is below:  
+```{r}
+#bootstrap analysis on simulated sequence 
+boot_strap(sim_seq_dist)
+plot(upgma(sim_seq_dist,method = "average"))
+```
+# Code Appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```
+

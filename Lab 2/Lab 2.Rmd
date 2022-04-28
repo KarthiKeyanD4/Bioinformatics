@@ -1,0 +1,160 @@
+---
+title: "Bioinformatics - Lab 2"
+author: |
+  | Biswas Kumar - Bisku859
+  | Karthikeyan Devarajan  - karde799
+date: "11/17/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ape)
+library(seqinr)
+library(phangorn)
+library(markovchain)
+library(dplyr)
+library(plotly)
+library(seriation)
+#library(msa)
+```
+  
+# Questions 1  
+## 1.1  
+*Simulate an artificial DNA sequence dataset. It should contain 33 sequence. The lengths of the sequences should be the same as in the lizard dataset, i.e. for each real sequence simulate an artificial one. The simulation rule is as follows, each nucleotide is to be independently and randomly drawn from the distribution given by the base composition (frequencies) in the true lizard sequences. Save your dataset in a fasta format file. Remember to give unique names to your sequences. Report on the base composition in your simulated data.*  
+```{r,echo=FALSE}
+given_dna <- read.fasta(file = "lizard_seqs.fasta")
+name <- as.list(names(given_dna))
+frequency_table <- NULL
+base_table <- NULL
+generated_nucleotide <- list()
+for(i in 1:length(given_dna)){
+  base_frequency <- count(given_dna[[i]],wordsize = 1)/(length(given_dna[[i]]))
+  generated_nucleotide[[i]] <- sample(x=c("a","c","g","t"),size = length(given_dna[[i]]),prob=base_frequency,replace=TRUE)
+  generated_frequency <- ape::count(generated_nucleotide[[i]],wordsize = 1)/(length(generated_nucleotide[[i]]))
+  frequency_table <- rbind(frequency_table,generated_frequency)
+  base_table <- rbind(base_table,base_frequency)
+}
+write.dna(generated_nucleotide, file = "out_sim.fasta",format = "fasta")
+rownames(frequency_table) <- name
+rownames(base_table) <- name
+colnames(frequency_table) <- paste(c("a_g","c_g","g_g","t_g"))
+```
+
+  
+```{r}
+final_df <- cbind(frequency_table,base_table)
+cat("The data with frequency of generated sequence and given sequence \n")
+final_df
+```
+  
+## 1.2  
+*Simulate a second artificial DNA sequence dataset. It should contain 33 sequence. The lengths of the sequences should be the same as in the lizard dataset, i.e. for each real sequence simulate an artificial one. First simulate a phylogenetic tree with 33 tips in phylo format (i.e. ape). Plot your resulting tree. For simulating the tree explore the functions of the ape, TreeSim or other R packages. Choose a simulation function and model yourself.*  
+```{r,echo=FALSE}
+t <- rtree(n = 33)
+plot(t)
+```
+The other way of simulating the data set could be done using Simseq as given in the question.  
+```{r,echo=FALSE}
+generated_sequence <- simSeq(t,Q = matrix(c(0.26,0.28,0.29,0.26), ncol = 4, nrow = 4),type = "DNA")
+```
+  
+Writing the sequence into fasta file.  
+```{r}
+write.dna(generated_sequence, file = "out_sim1.fasta",format = "fasta")
+```
+
+# Question 2  
+## 2.1    
+*Report some basic statistics on each sequence dataset: individual base composition, GC content, CG, AT content. Also translate your sequences into protein sequences (see Lab 1) and report on the amino acid composition. In your simulated sequences, how many times did you observe a stop codon inside your sequence? Does this occur in your true sequences? Comment.*  
+```{r,echo=FALSE}
+artificial_1 <- generated_nucleotide
+artificial_2 <- generated_sequence
+true <- given_dna
+seq_count <- function(x){ 
+  n<-length(x)
+  count_c <-0
+  count_a <- 0
+  for(i in 1:n) 
+    if(x[i]=="c" | x[i]=="g") 
+      count_c <- count_c + 1
+    else
+      count_a <-  count_a + 1
+  return(list(count_AT = count_a,count_CG = count_c))
+}
+
+h <- list()
+for(i in 1:length(true)){
+  h[[i]] <- seq_count(true[[i]]) 
+}
+
+k <-list()
+for(i in 1:length(artificial_1)){
+  k[[i]] <- seq_count(artificial_1[[i]])
+}
+
+j <- list()
+for(i in 1:length(artificial_1)){
+  j[[i]] <- seq_count(artificial_2[[i]])
+}
+
+```
+  
+## 2.2  
+*Try to fit a Markov chain to your three datasets from Question 1. What Markov chain order would you expect to obtain for your two simulated datasets? What order do you obtain for the true lizard sequences? Comment*  
+```{r,echo=FALSE}
+MC_true <- markovchainFit(given_dna, method = "mle")
+MC_1 <- markovchainFit(artificial_1, method = "mle")
+MC_1 <- markovchainFit(artificial_2, method = "mle")
+```
+  
+## 2.3  
+*Align your sequences using software of your choice (a starter for R: https://stackoverflow. com/questions/4497747/how-to-perform-basic-multiple-sequence-alignments-in-r, you can also look what Biopython, BioPerl offer, use the Clustal family of programs or something else of your choice).*  
+```{r,echo=FALSE}
+# True sequence
+MSA_true <-msa(file.choose(),type="dna")
+align <- msaConvert(MSA_true, type="seqinr::alignment")  
+distance_sequence <- dist.alignment(align, "similarity")
+k <- list(align=align,distance_sequence=distance_sequence)
+ord_seq<-get_order(seriate(k$distance_sequence,method="HC")) 
+dist<-as.matrix(distance_sequence)
+```
+  
+```{r,echo=FALSE}
+# artificial sequence 1
+MSA_1 <-msa(file.choose(),type="dna")
+align <- msaConvert(MSA_1, type="seqinr::alignment")  
+distance_sequence1 <- dist.alignment(align, "similarity")
+k <- list(align=align,distance_sequence=distance_sequence1)
+ord_seq<-get_order(seriate(k$distance_sequence,method="HC")) 
+dist<-as.matrix(distance_sequence)
+```
+  
+```{r,echo=FALSE}
+# artificial sequence 2
+MSA_2 <-msa(file.choose(),type="dna")
+align <- msaConvert(MSA_2, type="seqinr::alignment")  
+distance_sequence2 <- dist.alignment(align, "similarity")
+k <- list(align=align,distance_sequence=distance_sequence2)
+ord_seq<-get_order(seriate(k$distance_sequence,method="HC")) 
+dist<-as.matrix(distance_sequence)
+```
+
+# Question 3  
+## 3.21 
+*Construct (using algorithm and software of your choice) phylogenetic trees from the three multiple alignments (or distance matrices) done in Question 2.3. You might want to look at the functions offered by ape, phangorn (https://cran.r-project.org/web/packages/phangorn/ vignettes/Trees.pdf) or go for some completely different software. Plot the inferred trees. Are the two based on the simulated data similar to expected?*  
+```{r,echo=FALSE}
+#using wrapper function around hclust(upgma) to plot trees
+
+plot(upgma(distance_sequence,method = "average"))
+plot(upgma(distance_sequence1,method = "average"))
+
+```  
+  
+# Code Appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+
+```
+
